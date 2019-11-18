@@ -1,2 +1,2 @@
 # SSSniper
-Stupid Stickman Sniper a computer game made as a project for MIPT python course.
+Stupid Stickman Sniper is a computer game made as a project for MIPT python course.
