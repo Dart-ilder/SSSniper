@@ -9,4 +9,13 @@ Minimal target functional:
   
   Features:
     Random placement of stickmans on the map
+    Random clothes on the stickmans
+    Singleplayer gameplay (listed above)
+    Ability to only see through scope (rest of the screen is obscured by scope)
+
+Features to be added later on (in no particular order):
+  Ability to see distance to each stickman and read wind speed to concider bullet drop during shooting
+  Stickman animation to make shooting them harder
+  Multiplayer (through wifi) to replace timer limit with another player
+  More desireable features to come...
     
