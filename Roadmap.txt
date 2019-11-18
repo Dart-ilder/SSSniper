@@ -1,0 +1,12 @@
+This is the road map for our project.
+
+Minimal target functional:
+  Create a computer game with the following gameplay:
+    Player is given a text description of a stickman (featuring height/clothes/hairstyle)
+    Player needs to find mentioned stickman on the map
+    Once needed stickman is found player should click on it to "kill" him
+    If player is taking too long to complete that task timer stops and he loses
+  
+  Features:
+    Random placement of stickmans on the map
+    
