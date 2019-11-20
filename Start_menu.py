@@ -1,7 +1,5 @@
 from tkinter import *
 from PIL import Image, ImageTk
-import time
-import random
 
 tk = Tk()
 tk.title('Game')
@@ -76,19 +74,17 @@ class Menu():
         x, y = event.x, event.y
         if Menu.inside(self.START, self.START_S_load, x, y, self.canvas):
             self.canvas.delete('all')
-            tk.bind('<Button-1>', '')
-            tk.bind('<Motion>', '')
             print('lets play')
         elif Menu.inside(self.SETTINGS, self.SETTINGS_S_load, x, y, self.canvas):
             self.canvas.delete('all')
             settings = Menu(self.canvas, 'settings')
-            tk.bind('<Button-1>', '')
-            tk.bind('<Motion>', '')
+
         elif Menu.inside(self.CHOOSE, self.CHOOSE_S_load, x, y, self.canvas):
             self.canvas.delete('all')
             choose = Menu(self.canvas, 'choose')
-            tk.bind('<Button-1>', '')
-            tk.bind('<Motion>', '')
+        tk.bind('<Button-1>', '')
+        tk.bind('<Motion>', '')
+
 
 menu = Menu(canvas, 'menu')
 tk.bind('<Motion>', menu.motion)
