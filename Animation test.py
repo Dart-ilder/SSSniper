@@ -81,6 +81,6 @@ class Stickman(object):
             self.animation()
 
 
-x = MapCanvas("Maps\Game.jpg")
-z = Stickman("Stickmen\Stickman_exercise\Stickman_exercise.txt")
+x = MapCanvas("Maps/Game.jpg")
+z = Stickman("Stickman_exercise/Stickman_exercise.txt")
 tk.mainloop()
