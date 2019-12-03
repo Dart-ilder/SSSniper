@@ -1,0 +1,8 @@
+Scopes/scope-1.png    350   900 360  69 48 0
+Stickmen/Stickman_exercise/Stickman_exercise_2.png    350   900 560  70 47 0
+Stickmen/Stickman_exercise/Stickman_exercise_3.png    350   500 560  70 49 0
+Stickmen/Stickman_exercise/Stickman_exercise_4.png    350   900 560  58 52 15
+Stickmen/Stickman_exercise/Stickman_exercise_5.png    350   900 560  48 68 15
+Stickmen/Stickman_exercise/Stickman_exercise_4.png    350   900 560  58 52 15
+Stickmen/Stickman_exercise/Stickman_exercise_3.png    350   900 560  70 49 0
+Stickmen/Stickman_exercise/Stickman_exercise_2.png    350   900 560  70 47 0
