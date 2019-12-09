@@ -247,6 +247,7 @@ class Menu(object):
         server_port_entry.place(relx=.55, rely=.45)
         client_host_entry.place(relx=.55, rely=.50)
         client_port_entry.place(relx=.55, rely=.55)
+        server_port_entry.insert(0, '8888')
         tk.bind('<Button-1>', menu.click)
         tk.bind('<Motion>', menu.server_settings_menu_mouse_motion)
 
@@ -302,6 +303,7 @@ class Menu(object):
                     for i in range(0, len(multiplayer_labels)):
                         multiplayer_labels[i].place_forget()
                     for i in range(0, len(multiplayer_entries)):
+                        multiplayer_entries[i].delete(0, END)
                         multiplayer_entries[i].place_forget()
                     self.start_menu()
         if self.CANCEL:
@@ -341,3 +343,13 @@ class Menu(object):
                         print(online.server_init(multiplayer_settings(MULTIPLAYER_SETTINGS)[0]))
                     else:
                         pass
+
+
+
+
+menu = Menu(canvas)
+tk.bind('<Motion>', menu.main_menu_mouse_motion)
+tk.bind('<Button-1>', menu.main_menu_tree)
+
+
+tk.mainloop()
