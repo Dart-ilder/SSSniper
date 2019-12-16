@@ -77,6 +77,7 @@ def multiplayer_settings(settings_list):
 class Menu(object):
     def __init__(self, canvas):
         self.canvas = canvas
+        self.menu_ident = 1
 
         self.NAME_Pic = ('Images/Menu resources/SSSniper.png', 620, 80)
         self.START_B = ('Images/Menu resources/start_b.png', 600, 300)
@@ -191,13 +192,14 @@ class Menu(object):
         tk.bind('<Button-1>', self.start_menu_tree)
 
     def start_menu_mouse_motion(self, event):
-        x, y = event.x, event.y
-        self.BACK = Menu.pic_change(self.BACK, x, y, canvas, self.BACK_S_load, self.BACK_B_load, self.BACK_S,
-                                    self.BACK_B)
-        self.SINGLEPLAYER = Menu.pic_change(self.SINGLEPLAYER, x, y, canvas, self.SINGLEPLAYER_S_load,
-                                            self.SINGLEPLAYER_B_load, self.SINGLEPLAYER_S, self.SINGLEPLAYER_B)
-        self.MULTIPLAYER = Menu.pic_change(self.MULTIPLAYER, x, y, canvas, self.MULTIPLAYER_S_load,
-                                           self.MULTIPLAYER_B_load, self.MULTIPLAYER_S, self.MULTIPLAYER_B)
+        if self.menu_ident:
+            x, y = event.x, event.y
+            self.BACK = Menu.pic_change(self.BACK, x, y, canvas, self.BACK_S_load, self.BACK_B_load, self.BACK_S,
+                                        self.BACK_B)
+            self.SINGLEPLAYER = Menu.pic_change(self.SINGLEPLAYER, x, y, canvas, self.SINGLEPLAYER_S_load,
+                                                self.SINGLEPLAYER_B_load, self.SINGLEPLAYER_S, self.SINGLEPLAYER_B)
+            self.MULTIPLAYER = Menu.pic_change(self.MULTIPLAYER, x, y, canvas, self.MULTIPLAYER_S_load,
+                                               self.MULTIPLAYER_B_load, self.MULTIPLAYER_S, self.MULTIPLAYER_B)
 
     def settings_menu(self):
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
@@ -273,18 +275,21 @@ class Menu(object):
         elif Menu.mouse_inside_pic(self.EXIT, self.EXIT_S_load, x, y, self.canvas):
             sys.exit()
 
-    def start_menu_tree(self, event):
-        x, y = event.x, event.y
-        if Menu.mouse_inside_pic(self.SINGLEPLAYER, self.SINGLEPLAYER_S_load, x, y, self.canvas):
-            print(1)
-            pass  # game starts here
-        elif Menu.mouse_inside_pic(self.MULTIPLAYER, self.MULTIPLAYER_S_load, x, y, self.canvas):
-            self.canvas.delete('all')
-            self.server_settings_menu()
-        elif Menu.mouse_inside_pic(self.BACK, self.BACK_S_load, x, y, self.canvas):
-            self.canvas.delete('all')
-            self.BACK = 0
-            self.main_menu()
+    def start_menu_tree(self, event): 
+        # 'дерево' перехода из start_menu 
+        if self.menu_ident: 
+            x, y = event.x, event.y 
+            if Menu.mouse_inside_pic(self.SINGLEPLAYER, self.SINGLEPLAYER_S_load, x, y, self.canvas): 
+                self.canvas.delete('all')
+                self.menu_ident = 0 
+                game.game_process(tk, canvas) 
+            elif Menu.mouse_inside_pic(self.MULTIPLAYER, self.MULTIPLAYER_S_load, x, y, self.canvas): 
+                self.canvas.delete('all') 
+                self.server_settings_menu() 
+            elif Menu.mouse_inside_pic(self.BACK, self.BACK_S_load, x, y, self.canvas): 
+                self.canvas.delete('all') 
+                self.BACK = 0 
+                self.main_menu()
 
     def click(self, event):
         x, y = event.x, event.y
