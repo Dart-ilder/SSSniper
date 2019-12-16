@@ -28,7 +28,7 @@ def server_send(conn, value):
 
 
 def server_listen(conn):
-    # принимает list (!!!)
+    # принимает list (!!!) атай сас
     stats = []
     stats_alt = ''
     a = conn.recv(1024)
