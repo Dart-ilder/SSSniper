@@ -1,12 +1,8 @@
 from tkinter import *
 from PIL import Image, ImageTk
-from pyautogui import moveTo
-import time
-import math as m
 import sys
 import pygame
 import online
-import game
 
 
 def _from_rgb(rgb):
@@ -14,38 +10,33 @@ def _from_rgb(rgb):
     """
     return "#%02x%02x%02x" % rgb
 
-# инициализируем pygame
+
 pygame.init()
-# создаём новый объект — окно с игровым полем
+
 tk = Tk()
 tk.title('Game')
 tk.config(cursor='plus')
 tk.configure(background=_from_rgb((235, 235, 235)))
-# запрещаем менять размеры окна, для этого используем свойство resizable
 tk.resizable(0, 0)
-# помещаем наше игровое окно выше остальных окон на компьютере, чтобы другие окна не могли его заслонить.
+
 tk.wm_attributes('-topmost', 1)
-# Globals
+
 WIDTH = 1200
 HEIGHT = 800
-# узнаем размеры экрана в пикселях
-SCREEN_WIDTH = tk.winfo_screenwidth()
-SCREEN_HEIGHT = tk.winfo_screenheight()
-# Settings
+
 MUSIC_VOLUME = 0.5
 SOUNDS_VOLUME = 0.5
 SENSITIVITY = 1
 SETTINGS = [MUSIC_VOLUME, SOUNDS_VOLUME, SENSITIVITY]
-# создаём новый холст — 1200 на 800 пикселей и размещаем его по центру, где и будем рисовать игру
-tk.geometry('{}x{}+{}+{}'.format(WIDTH, HEIGHT, int((SCREEN_WIDTH - WIDTH) / 2), int((SCREEN_HEIGHT - HEIGHT) / 2)))
+
 canvas = Canvas(tk, width=WIDTH, height=HEIGHT)
 canvas.pack()
 tk.update()
-# добавляем фоновую музыку
+
 background_sound = pygame.mixer.music.load('Sounds/background.mp3')
 pygame.mixer.music.set_volume(MUSIC_VOLUME)
 pygame.mixer.music.play()
-# создаём окна вывода и ввода для меню настроек
+
 music_volume = StringVar()
 sounds_volume = StringVar()
 sensitivity = StringVar()
@@ -57,7 +48,7 @@ music_volume_entry = Entry(textvariable=music_volume)
 sounds_volume_entry = Entry(textvariable=sounds_volume)
 sensitivity_entry = Entry(textvariable=sensitivity)
 music_entries = [music_volume_entry, sounds_volume_entry, sensitivity_entry]
-# создаём окна вывода и ввода для меню настроек онлайн режима
+
 server_host = StringVar()
 server_port = StringVar()
 client_host = StringVar()
@@ -75,13 +66,10 @@ MULTIPLAYER_SETTINGS = [server_port, client_host, client_port]
 
 
 def settings_refresh(settings_list):
-    # обновляет полученные настройки
     pygame.mixer.music.set_volume(settings_list[0])
 
 
 def multiplayer_settings(settings_list):
-    # считывает введённые в меню настроек онлайн режима данные и по ним присваевает роль host или client
-    # host присваевается, если заполнено окно server port, иначе client
     if settings_list[0]:
         return [1, settings_list[0]]
     else:
@@ -89,35 +77,31 @@ def multiplayer_settings(settings_list):
 
 
 class Menu(object):
-    # создаём объект класса Menu
     def __init__(self, canvas):
-        # инициализирует окно работы и картинки, которые буду использоваться в меню
-        # переводит их в необходимый для tkinter формат
         self.canvas = canvas
-        self.menu_ident = 1
 
-        self.NAME_Pic = ('Images/Menu resources/SSSniper.png', 620, 80)
-        self.START_B = ('Images/Menu resources/start_b.png', 600, 300)
-        self.START_S = ('Images/Menu resources/start_s.png', 600, 300)
-        self.SETTINGS_B = ('Images/Menu resources/settings_b.png', 601, 400)
-        self.SETTINGS_S = ('Images/Menu resources/settings_s.png', 601, 400)
-        self.CHOOSE_B = ('Images/Menu resources/choose_b.png', 600, 540)
-        self.CHOOSE_S = ('Images/Menu resources/choose_s.png', 600, 540)
-        self.ABOUT_B = ('Images/Menu resources/about_b.png', 597, 490)
-        self.ABOUT_S = ('Images/Menu resources/about_s.png', 597, 490)
-        self.HOLE_Pic = ('Images/Menu resources/hole.png', -50, 700)
-        self.BACK_B = ('Images/Menu resources/back_b.png', 30, 60)
-        self.BACK_S = ('Images/Menu resources/back_s.png', 30, 60)
-        self.EXIT_S = ('Images/Menu resources/exit_s.png', 600, 600)
-        self.EXIT_B = ('Images/Menu resources/exit_b.png', 600, 600)
-        self.CANCEL_S = ('Images/Menu resources/cancel_s.png', 750, 600)
-        self.CANCEL_B = ('Images/Menu resources/cancel_b.png', 750, 600)
-        self.SAVE_S = ('Images/Menu resources/save_s.png', 450, 600)
-        self.SAVE_B = ('Images/Menu resources/save_b.png', 450, 600)
-        self.SINGLEPLAYER_S = ('Images/Menu resources/singleplayer_s.png', 700, 350)
-        self.SINGLEPLAYER_B = ('Images/Menu resources/singleplayer_b.png', 700, 350)
-        self.MULTIPLAYER_S = ('Images/Menu resources/multiplayer_s.png', 725, 450)
-        self.MULTIPLAYER_B = ('Images/Menu resources/multiplayer_b.png', 725, 450)
+        self.NAME_Pic = ('Stickmen/SSSniper.png', 620, 80)
+        self.START_B = ('Stickmen/start_b.png', 600, 300)
+        self.START_S = ('Stickmen/start_s.png', 600, 300)
+        self.SETTINGS_B = ('Stickmen/settings_b.png', 601, 400)
+        self.SETTINGS_S = ('Stickmen/settings_s.png', 601, 400)
+        self.CHOOSE_B = ('Stickmen/choose_b.png', 600, 540)
+        self.CHOOSE_S = ('Stickmen/choose_s.png', 600, 540)
+        self.ABOUT_B = ('Stickmen/about_b.png', 597, 490)
+        self.ABOUT_S = ('Stickmen/about_s.png', 597, 490)
+        self.HOLE_Pic = ('Stickmen/hole.png', -50, 700)
+        self.BACK_B = ('Stickmen/back_b.png', 30, 60)
+        self.BACK_S = ('Stickmen/back_s.png', 30, 60)
+        self.EXIT_S = ('Stickmen/exit_s.png', 600, 600)
+        self.EXIT_B = ('Stickmen/exit_b.png', 600, 600)
+        self.CANCEL_S = ('Stickmen/cancel_s.png', 750, 600)
+        self.CANCEL_B = ('Stickmen/cancel_b.png', 750, 600)
+        self.SAVE_S = ('Stickmen/save_s.png', 450, 600)
+        self.SAVE_B = ('Stickmen/save_b.png', 450, 600)
+        self.SINGLEPLAYER_S = ('Stickmen/singleplayer_s.png', 700, 350)
+        self.SINGLEPLAYER_B = ('Stickmen/singleplayer_b.png', 700, 350)
+        self.MULTIPLAYER_S = ('Stickmen/multiplayer_s.png', 725, 450)
+        self.MULTIPLAYER_B = ('Stickmen/multiplayer_b.png', 725, 450)
 
         self.NAME_load = ImageTk.PhotoImage(Image.open(self.NAME_Pic[0]))
         self.CHOOSE_S_load = ImageTk.PhotoImage(Image.open(self.CHOOSE_S[0]))
@@ -158,7 +142,6 @@ class Menu(object):
         canvas.update()
 
     def mouse_inside_pic(obj, obj_s_load, x, y, canvas):
-        # проверяет, находится ли мышка на картинке
         if canvas.coords(obj)[0] - obj_s_load.width() * 0.5 < x < canvas.coords(obj)[
                0] + obj_s_load.width() * 0.5 and canvas.coords(obj)[
                1] - obj_s_load.height() * 0.5 < y < canvas.coords(obj)[
@@ -168,7 +151,6 @@ class Menu(object):
             return False
 
     def pic_change(obj, x, y, canvas, obj_s_load, obj_b_load, obj_s, obj_b):
-        # если мышка находится на картинке, увеличивает её размер
         if Menu.mouse_inside_pic(obj, obj_s_load, x, y, canvas):
             canvas.delete(obj)
             obj_returned = canvas.create_image(obj_b[1], obj_b[2], image=obj_b_load)
@@ -178,7 +160,6 @@ class Menu(object):
         return obj_returned
 
     def main_menu(self):
-        # создаёт главное меню
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
         self.START = canvas.create_image(self.START_S[1], self.START_S[2], image=self.START_S_load)
         self.SETTINGS = canvas.create_image(self.SETTINGS_S[1], self.SETTINGS_S[2], image=self.SETTINGS_S_load)
@@ -188,7 +169,6 @@ class Menu(object):
         tk.bind('<Motion>', self.main_menu_mouse_motion)
 
     def main_menu_mouse_motion(self, event):
-        # проверяет, находится ли мышка на картинках из main_menu
         self.START = Menu.pic_change(self.START, event.x, event.y, canvas, self.START_S_load, self.START_B_load,
                                      self.START_S, self.START_B)
         self.SETTINGS = Menu.pic_change(self.SETTINGS, event.x, event.y, canvas, self.SETTINGS_S_load,
@@ -199,7 +179,6 @@ class Menu(object):
                                     self.EXIT_S, self.EXIT_B)
 
     def start_menu(self):
-        # создаёт стартовое меню
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
         self.HOLE = canvas.create_image(self.HOLE_Pic[1], self.HOLE_Pic[2], image=self.HOLE_load)
         self.BACK = canvas.create_image(self.BACK_S[1], self.BACK_S[2], image=self.BACK_S_load)
@@ -212,18 +191,15 @@ class Menu(object):
         tk.bind('<Button-1>', self.start_menu_tree)
 
     def start_menu_mouse_motion(self, event):
-        # проверяет, находится ли мышка на картинках из start_menu
-        if self.menu_ident:
-            x, y = event.x, event.y
-            self.BACK = Menu.pic_change(self.BACK, x, y, canvas, self.BACK_S_load, self.BACK_B_load, self.BACK_S,
-                                        self.BACK_B)
-            self.SINGLEPLAYER = Menu.pic_change(self.SINGLEPLAYER, x, y, canvas, self.SINGLEPLAYER_S_load,
-                                                self.SINGLEPLAYER_B_load, self.SINGLEPLAYER_S, self.SINGLEPLAYER_B)
-            self.MULTIPLAYER = Menu.pic_change(self.MULTIPLAYER, x, y, canvas, self.MULTIPLAYER_S_load,
-                                               self.MULTIPLAYER_B_load, self.MULTIPLAYER_S, self.MULTIPLAYER_B)
+        x, y = event.x, event.y
+        self.BACK = Menu.pic_change(self.BACK, x, y, canvas, self.BACK_S_load, self.BACK_B_load, self.BACK_S,
+                                    self.BACK_B)
+        self.SINGLEPLAYER = Menu.pic_change(self.SINGLEPLAYER, x, y, canvas, self.SINGLEPLAYER_S_load,
+                                            self.SINGLEPLAYER_B_load, self.SINGLEPLAYER_S, self.SINGLEPLAYER_B)
+        self.MULTIPLAYER = Menu.pic_change(self.MULTIPLAYER, x, y, canvas, self.MULTIPLAYER_S_load,
+                                           self.MULTIPLAYER_B_load, self.MULTIPLAYER_S, self.MULTIPLAYER_B)
 
     def settings_menu(self):
-        # создаёт меню настроек
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
         self.CANCEL = canvas.create_image(self.CANCEL_S[1], self.CANCEL_S[2], image=self.CANCEL_S_load)
         self.SAVE = canvas.create_image(self.SAVE_S[1], self.SAVE_S[2], image=self.SAVE_S_load)
@@ -240,7 +216,6 @@ class Menu(object):
         tk.bind('<Motion>', menu.settings_menu_mouse_motion)
 
     def settings_menu_mouse_motion(self, event):
-        # проверяет, находится ли мышка на картинках из settings_menu
         x, y = event.x, event.y
         self.CANCEL = Menu.pic_change(self.CANCEL, x, y, canvas, self.CANCEL_S_load, self.CANCEL_B_load, self.CANCEL_S,
                                       self.CANCEL_B)
@@ -248,7 +223,6 @@ class Menu(object):
                                     self.SAVE_B)
 
     def about_menu(self):
-        # создаёт меню дополнительной информации
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
         self.BACK = canvas.create_image(self.BACK_S[1], self.BACK_S[2], image=self.BACK_S_load)
         self.previous_menu_branch = "main_menu"
@@ -256,13 +230,11 @@ class Menu(object):
         tk.bind('<Button-1>', self.click)
 
     def about_menu_mouse_motion(self, event):
-        # проверяет, находится ли мышка на картинках из about_menu
         x, y = event.x, event.y
         self.BACK = Menu.pic_change(self.BACK, x, y, canvas, self.BACK_S_load, self.BACK_B_load, self.BACK_S,
                                     self.BACK_B)
 
     def server_settings_menu(self):
-        # создаёт меню настроек для режима игры по сети
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
         self.CANCEL = canvas.create_image(self.CANCEL_S[1], self.CANCEL_S[2], image=self.CANCEL_S_load)
         self.SAVE = canvas.create_image(self.SAVE_S[1], self.SAVE_S[2], image=self.SAVE_S_load)
@@ -280,7 +252,6 @@ class Menu(object):
         tk.bind('<Motion>', menu.server_settings_menu_mouse_motion)
 
     def server_settings_menu_mouse_motion(self, event):
-        # проверяет, находится ли мышка на картинках из server_settings_menu
         x, y = event.x, event.y
         self.CANCEL = Menu.pic_change(self.CANCEL, x, y, canvas, self.CANCEL_S_load, self.CANCEL_B_load, self.CANCEL_S,
                                       self.CANCEL_B)
@@ -288,7 +259,6 @@ class Menu(object):
                                     self.SAVE_B)
 
     def main_menu_tree(self, event):
-        # 'дерево' перехода из main_menu
         x, y = event.x, event.y
         if Menu.mouse_inside_pic(self.START, self.START_S_load, x, y, self.canvas):
             self.canvas.delete('all')
@@ -303,23 +273,19 @@ class Menu(object):
             sys.exit()
 
     def start_menu_tree(self, event):
-        # 'дерево' перехода из start_menu
-        if self.menu_ident:
-            x, y = event.x, event.y
-            if Menu.mouse_inside_pic(self.SINGLEPLAYER, self.SINGLEPLAYER_S_load, x, y, self.canvas):
-                self.canvas.delete('all')
-                self.menu_ident = 0
-                game.game_process(tk, canvas)
-            elif Menu.mouse_inside_pic(self.MULTIPLAYER, self.MULTIPLAYER_S_load, x, y, self.canvas):
-                self.canvas.delete('all')
-                self.server_settings_menu()
-            elif Menu.mouse_inside_pic(self.BACK, self.BACK_S_load, x, y, self.canvas):
-                self.canvas.delete('all')
-                self.BACK = 0
-                self.main_menu()
+        x, y = event.x, event.y
+        if Menu.mouse_inside_pic(self.SINGLEPLAYER, self.SINGLEPLAYER_S_load, x, y, self.canvas):
+            print(1)
+            pass #game starts here
+        elif Menu.mouse_inside_pic(self.MULTIPLAYER, self.MULTIPLAYER_S_load, x, y, self.canvas):
+            self.canvas.delete('all')
+            self.server_settings_menu()
+        elif Menu.mouse_inside_pic(self.BACK, self.BACK_S_load, x, y, self.canvas):
+            self.canvas.delete('all')
+            self.BACK = 0
+            self.main_menu()
 
     def click(self, event):
-        # проверка клика
         x, y = event.x, event.y
         if self.BACK:
             if Menu.mouse_inside_pic(self.BACK, self.BACK_S_load, x, y, self.canvas):
