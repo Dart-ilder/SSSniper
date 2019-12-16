@@ -2,6 +2,7 @@ from tkinter import *
 from PIL import Image, ImageTk
 import sys
 import pygame
+import game
 from SSH_server import Server
 
 
