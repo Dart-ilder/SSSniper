@@ -2,8 +2,7 @@ import socket
 import time
 
 
-
-def server_init(port=8888):
+def server_init(port):
     # Инициализация сервера
     # Возвращает массив из переменных conn, addr, host.
     # conn - сокет соединения клиента. addr - адрес для соединения. host - имя компа в локальной сети
@@ -14,7 +13,6 @@ def server_init(port=8888):
     host = socket.gethostname()
     sock.bind((host, port))
     sock.listen(1)
-
     conn, addr = sock.accept()
     return conn, addr, host
 
