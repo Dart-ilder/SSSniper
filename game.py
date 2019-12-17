@@ -13,12 +13,15 @@ def game_process(tk1, canvas1, login, role, settings):
     else:
         server = Server(login, role)
         string = 'init'
+        print(server.LIST())
         server.PUT( string , 'init_' + str(role))
 
-        server.PUT('0', 'win_state')
+        #server.PUT('0', 'win_state')
+        #server_GET = server.GET('win_state')
+        #print(server_GET)
         server_list = server.LIST(str(login))
         print(server_list)
-        while len(server_list) < 3:
+        while len(server_list) < 2:
             server_list = server.LIST(str(login))
             time.sleep(0.1)
     # создаём новый объект — окно с игровым полем.
@@ -54,17 +57,21 @@ def game_process(tk1, canvas1, login, role, settings):
         if login == 'singleplayer':
             pass
         else:
-            server.PUT('1', 'win_state')
-            canvas.after(20, server.end())
+            server.PUT('1', 'win_state1')
+            #canvas.after(2000, server.end())
             raise SystemExit('won')
 
     def win_check():
+        print('a')
         if login == 'singleplayer':
             pass
         else:
-            win_state = server.GET('win_state')
-            if win_state == '1':
-                canvas.after(20, server.end())
+            print('b')
+            win_list = server.LIST(login)
+            #print('win_state', win_state)
+            if 'win_state1' in win_list:
+                #canvas.after(2000, server.end())
+                #server.end()
                 server.end()
                 raise SystemExit('lost')
         canvas.after(20, win_check)
