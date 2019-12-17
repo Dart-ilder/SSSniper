@@ -26,8 +26,8 @@ tk.wm_attributes('-topmost', 1)
 WIDTH = 1200
 HEIGHT = 800
 
-MUSIC_VOLUME = 0.5
-SOUNDS_VOLUME = 0.5
+MUSIC_VOLUME = 0.1
+SOUNDS_VOLUME = 0.1
 SENSITIVITY = 1
 SETTINGS = [MUSIC_VOLUME, SOUNDS_VOLUME, SENSITIVITY]
 
@@ -283,7 +283,7 @@ class Menu(object):
             if Menu.mouse_inside_pic(self.SINGLEPLAYER, self.SINGLEPLAYER_S_load, x, y, self.canvas): 
                 self.canvas.delete('all')
                 self.menu_ident = 0 
-                game.game_process(tk, canvas) 
+                game.game_process(tk, canvas, 'singleplayer', 'first')
             elif Menu.mouse_inside_pic(self.MULTIPLAYER, self.MULTIPLAYER_S_load, x, y, self.canvas): 
                 self.canvas.delete('all') 
                 self.server_settings_menu() 
@@ -344,12 +344,15 @@ class Menu(object):
                 if self.previous_menu_branch == "start_menu":
                     if multiplayer_entries[0].get():
                         MULTIPLAYER_SETTINGS[0] = multiplayer_entries[0].get()
+                        game.game_process(tk, canvas, MULTIPLAYER_SETTINGS[0], 'first')
                         print(MULTIPLAYER_SETTINGS[0])
-                        server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[0], 'first')
+                        #server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[0], 'first')
+
                     elif multiplayer_entries[1].get():
                         MULTIPLAYER_SETTINGS[1] = multiplayer_entries[1].get()
+                        game.game_process(tk, canvas, MULTIPLAYER_SETTINGS[1], 'second')
                         print(MULTIPLAYER_SETTINGS[1])
-                        server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[1], 'second')
+                        #server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[1], 'second')
                     else:
                         pass
 

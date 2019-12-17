@@ -4,9 +4,24 @@ from pyautogui import moveTo
 import time
 import math as m
 import pygame
+from SSH_server import Server
 
 
-def game_process(tk1, canvas1):
+def game_process(tk1, canvas1, login, role):
+    if login == 'singleplayer':
+        pass
+    else:
+        server = Server(login, role)
+        server.end()
+        server = Server(login, role)
+        server.PUT('init', 'init_' + str(role))
+
+        server.PUT('0', 'win_state')
+        server_list = server.LIST(str(login))
+        print(server_list)
+        while len(server_list) < 3:
+            server_list = server.LIST(str(login))
+            time.sleep(0.1)
     # создаём новый объект — окно с игровым полем.
     tk = tk1
     tk.title('Game')
@@ -26,8 +41,8 @@ def game_process(tk1, canvas1):
     SCREEN_WIDTH = tk.winfo_screenwidth()
     SCREEN_HEIGHT = tk.winfo_screenheight()
     # добавляем звуки выстрела
-    shoot_sound = pygame.mixer.Sound('Sounds/shoot.mp3')
-    shoot_sound.set_volume(SOUNDS_VOLUME)
+    #shoot_sound = pygame.mixer.Sound('Sounds/shoot.mp3')
+    #shoot_sound.set_volume(SOUNDS_VOLUME)
     # создаём новый холст — 1200 на 800 пикселей и размещаем его по центру, где и будем рисовать игру
     tk.geometry('{}x{}+{}+{}'.format(WIDTH, HEIGHT, int((SCREEN_WIDTH - WIDTH) / 2), int((SCREEN_HEIGHT - HEIGHT) / 2)))
     canvas = canvas1
@@ -37,7 +52,8 @@ def game_process(tk1, canvas1):
     tk.update()
 
     def win():
-        pass
+        server.PUT('1', 'win_state')
+        raise SystemExit('won')
 
     def quit(event):
         # выходит из игры
@@ -137,6 +153,9 @@ def game_process(tk1, canvas1):
                 self.counter += 1
                 self.animation()
                 canvas.after(self.change_time[self.counter], self.update)
+            win_state = server.GET('win_state')
+            if win_state == '1':
+                raise SystemExit('lost')
 
         def motion(self):
             self.offset_x += camera.return_data()[0]
@@ -155,7 +174,7 @@ def game_process(tk1, canvas1):
             self.start_ident = 0
 
         def hit(self, x, y):
-            shoot_sound.play()
+            #shoot_sound.play()
             if (self.head_coord_list[self.counter][0] + self.image_coord_list[self.counter][0] +
                 self.offset_x - x) ** 2 + (self.head_coord_list[self.counter][1] +
                                            self.image_coord_list[self.counter][1] + self.offset_y - y) ** 2 <= \
