@@ -7,14 +7,13 @@ import pygame
 from SSH_server import Server
 
 
-def game_process(tk1, canvas1, login, role):
+def game_process(tk1, canvas1, login, role, settings):
     if login == 'singleplayer':
         pass
     else:
         server = Server(login, role)
-        server.end()
-        server = Server(login, role)
-        server.PUT('init', 'init_' + str(role))
+        string = 'init'
+        server.PUT( string , 'init_' + str(role))
 
         server.PUT('0', 'win_state')
         server_list = server.LIST(str(login))
@@ -35,8 +34,8 @@ def game_process(tk1, canvas1, login, role):
     HEIGHT = 800
     # Settings
     RELOAD_TIME = 5000
-    SOUNDS_VOLUME = 0.5
-    SENSIVITY = 1
+    SOUNDS_VOLUME = settings[1]
+    SENSIVITY = settings[2]
     # узнаем размеры экрана в пикселях
     SCREEN_WIDTH = tk.winfo_screenwidth()
     SCREEN_HEIGHT = tk.winfo_screenheight()
@@ -52,8 +51,23 @@ def game_process(tk1, canvas1, login, role):
     tk.update()
 
     def win():
-        server.PUT('1', 'win_state')
-        raise SystemExit('won')
+        if login == 'singleplayer':
+            pass
+        else:
+            server.PUT('1', 'win_state')
+            canvas.after(20, server.end())
+            raise SystemExit('won')
+
+    def win_check():
+        if login == 'singleplayer':
+            pass
+        else:
+            win_state = server.GET('win_state')
+            if win_state == '1':
+                canvas.after(20, server.end())
+                server.end()
+                raise SystemExit('lost')
+        canvas.after(20, win_check)
 
     def quit(event):
         # выходит из игры
@@ -153,9 +167,6 @@ def game_process(tk1, canvas1, login, role):
                 self.counter += 1
                 self.animation()
                 canvas.after(self.change_time[self.counter], self.update)
-            win_state = server.GET('win_state')
-            if win_state == '1':
-                raise SystemExit('lost')
 
         def motion(self):
             self.offset_x += camera.return_data()[0]
@@ -238,6 +249,7 @@ def game_process(tk1, canvas1, login, role):
     stickmen.append(Stickman("Images/Stickmen/Stickman_exercise/Stickman_exercise2.txt",
                              "Images/Customization resources/Hat-1.png"))
     Shoot(len(stickmen))
+    win_check()
     time.sleep(0.05)
     tk.focus_set()
     tk.mainloop()

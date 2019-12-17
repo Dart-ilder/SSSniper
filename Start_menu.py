@@ -3,7 +3,6 @@ from PIL import Image, ImageTk
 import sys
 import pygame
 import game
-from SSH_server import Server
 
 
 def _from_rgb(rgb):
@@ -12,45 +11,51 @@ def _from_rgb(rgb):
     return "#%02x%02x%02x" % rgb
 
 
-# pygame.init()!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# инициализируем pygame
 pygame.mixer.init()
-
+# создаём новый объект — окно с игровым полем
 tk = Tk()
 tk.title('Game')
 tk.config(cursor='plus')
 tk.configure(background=_from_rgb((235, 235, 235)))
 tk.resizable(0, 0)
-
+# помещаем наше игровое окно выше остальных окон на компьютере, чтобы другие окна не могли его заслонить.
 tk.wm_attributes('-topmost', 1)
-
+# Globals
 WIDTH = 1200
 HEIGHT = 800
-
-MUSIC_VOLUME = 0.1
-SOUNDS_VOLUME = 0.1
+# узнаем размеры экрана в пикселях
+SCREEN_WIDTH = tk.winfo_screenwidth()
+SCREEN_HEIGHT = tk.winfo_screenheight()
+# Settings
+MUSIC_VOLUME = 0.5
+SOUNDS_VOLUME = 0.5
 SENSITIVITY = 1
 SETTINGS = [MUSIC_VOLUME, SOUNDS_VOLUME, SENSITIVITY]
-
+# создаём новый холст — 1200 на 800 пикселей и размещаем его по центру, где и будем рисовать игру
+tk.geometry('{}x{}+{}+{}'.format(WIDTH, HEIGHT, int((SCREEN_WIDTH - WIDTH) / 2), int((SCREEN_HEIGHT - HEIGHT) / 2)))
 canvas = Canvas(tk, width=WIDTH, height=HEIGHT)
 canvas.pack()
 tk.update()
-
+# добавляем фоновую музыку
 background_sound = pygame.mixer.music.load('Sounds/background.mp3')
 pygame.mixer.music.set_volume(MUSIC_VOLUME)
 pygame.mixer.music.play()
-
+# создаём окна вывода и ввода для меню настроек
 music_volume = StringVar()
 sounds_volume = StringVar()
 sensitivity = StringVar()
+
 music_volume_label = Label(text="Music volume:", font="Arial 16")
 sounds_volume_label = Label(text="Sounds volume:", font="Arial 16")
 sensitivity_label = Label(text="Sensitivity:", font="Arial 16")
 music_labels = [music_volume_label, sounds_volume_label, sensitivity_label]
+
 music_volume_entry = Entry(textvariable=music_volume)
 sounds_volume_entry = Entry(textvariable=sounds_volume)
 sensitivity_entry = Entry(textvariable=sensitivity)
 music_entries = [music_volume_entry, sounds_volume_entry, sensitivity_entry]
-
+# создаём окна вывода и ввода для меню настроек онлайн режима
 server_host = StringVar()
 server_port = StringVar()
 
@@ -65,10 +70,13 @@ MULTIPLAYER_SETTINGS = [server_host, server_port]
 
 
 def settings_refresh(settings_list):
+    # обновляет полученные настройки
     pygame.mixer.music.set_volume(settings_list[0])
 
 
 def multiplayer_settings(settings_list):
+    # считывает введённые в меню настроек онлайн режима данные и по ним присваевает роль host или client
+    # host присваевается, если заполнено окно server port, иначе client
     if settings_list[0]:
         return [1, settings_list[0]]
     else:
@@ -76,7 +84,10 @@ def multiplayer_settings(settings_list):
 
 
 class Menu(object):
+    # создаём объект класса Menu
     def __init__(self, canvas):
+        # инициализирует окно работы и картинки, которые буду использоваться в меню
+        # переводит их в необходимый для tkinter формат
         self.canvas = canvas
         self.menu_ident = 1
 
@@ -144,15 +155,17 @@ class Menu(object):
         canvas.update()
 
     def mouse_inside_pic(obj, obj_s_load, x, y, canvas):
+        # проверяет, находится ли мышка на картинке
         if canvas.coords(obj)[0] - obj_s_load.width() * 0.5 < x < canvas.coords(obj)[
-            0] + obj_s_load.width() * 0.5 and canvas.coords(obj)[
-            1] - obj_s_load.height() * 0.5 < y < canvas.coords(obj)[
-            1] + obj_s_load.height() * 0.5:
+                                0] + obj_s_load.width() * 0.5 and canvas.coords(obj)[
+                                 1] - obj_s_load.height() * 0.5 < y < canvas.coords(obj)[
+                                 1] + obj_s_load.height() * 0.5:
             return True
         else:
             return False
 
     def pic_change(obj, x, y, canvas, obj_s_load, obj_b_load, obj_s, obj_b):
+        # если мышка находится на картинке, увеличивает её размер
         if Menu.mouse_inside_pic(obj, obj_s_load, x, y, canvas):
             canvas.delete(obj)
             obj_returned = canvas.create_image(obj_b[1], obj_b[2], image=obj_b_load)
@@ -203,10 +216,10 @@ class Menu(object):
                                                self.MULTIPLAYER_B_load, self.MULTIPLAYER_S, self.MULTIPLAYER_B)
 
     def settings_menu(self):
+        # создаёт меню настроек
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
         self.CANCEL = canvas.create_image(self.CANCEL_S[1], self.CANCEL_S[2], image=self.CANCEL_S_load)
         self.SAVE = canvas.create_image(self.SAVE_S[1], self.SAVE_S[2], image=self.SAVE_S_load)
-        self.BACK = canvas.create_image(self.BACK_S[1], self.BACK_S[2], image=self.BACK_S_load)
         self.previous_menu_branch = "main_menu"
         music_volume_label.place(relx=.35, rely=.4)
         sounds_volume_label.place(relx=.35, rely=.5)
@@ -225,8 +238,6 @@ class Menu(object):
                                       self.CANCEL_B)
         self.SAVE = Menu.pic_change(self.SAVE, x, y, canvas, self.SAVE_S_load, self.SAVE_B_load, self.SAVE_S,
                                     self.SAVE_B)
-        self.BACK = Menu.pic_change(self.BACK, x, y, canvas, self.BACK_S_load, self.BACK_B_load, self.BACK_S,
-                                    self.BACK_B)
 
     def about_menu(self):
         self.NAME = canvas.create_image(self.NAME_Pic[1], self.NAME_Pic[2], image=self.NAME_load)
@@ -247,10 +258,10 @@ class Menu(object):
         self.SAVE = canvas.create_image(self.SAVE_S[1], self.SAVE_S[2], image=self.SAVE_S_load)
         self.BACK = 0
         self.previous_menu_branch = "start_menu"
-        server_host_label.place(relx=.35, rely=.40)
-        server_port_label.place(relx=.35, rely=.45)
-        server_port_entry.place(relx=.55, rely=.45)
-        server_host_entry.place(relx=.55, rely=.40)
+        server_host_label.place(relx=.30, rely=.40)
+        server_port_label.place(relx=.30, rely=.45)
+        server_port_entry.place(relx=.55, rely=.46)
+        server_host_entry.place(relx=.55, rely=.41)
 
         tk.bind('<Button-1>', menu.click)
         tk.bind('<Motion>', menu.server_settings_menu_mouse_motion)
@@ -276,20 +287,20 @@ class Menu(object):
         elif Menu.mouse_inside_pic(self.EXIT, self.EXIT_S_load, x, y, self.canvas):
             sys.exit()
 
-    def start_menu_tree(self, event): 
+    def start_menu_tree(self, event):
         # 'дерево' перехода из start_menu 
-        if self.menu_ident: 
-            x, y = event.x, event.y 
-            if Menu.mouse_inside_pic(self.SINGLEPLAYER, self.SINGLEPLAYER_S_load, x, y, self.canvas): 
+        if self.menu_ident:
+            x, y = event.x, event.y
+            if Menu.mouse_inside_pic(self.SINGLEPLAYER, self.SINGLEPLAYER_S_load, x, y, self.canvas):
                 self.canvas.delete('all')
-                self.menu_ident = 0 
-                game.game_process(tk, canvas, 'singleplayer', 'first')
-            elif Menu.mouse_inside_pic(self.MULTIPLAYER, self.MULTIPLAYER_S_load, x, y, self.canvas): 
-                self.canvas.delete('all') 
-                self.server_settings_menu() 
-            elif Menu.mouse_inside_pic(self.BACK, self.BACK_S_load, x, y, self.canvas): 
-                self.canvas.delete('all') 
-                self.BACK = 0 
+                self.menu_ident = 0
+                game.game_process(tk, canvas, 'singleplayer', 'first', SETTINGS)
+            elif Menu.mouse_inside_pic(self.MULTIPLAYER, self.MULTIPLAYER_S_load, x, y, self.canvas):
+                self.canvas.delete('all')
+                self.server_settings_menu()
+            elif Menu.mouse_inside_pic(self.BACK, self.BACK_S_load, x, y, self.canvas):
+                self.canvas.delete('all')
+                self.BACK = 0
                 self.main_menu()
 
     def click(self, event):
@@ -314,7 +325,6 @@ class Menu(object):
                         multiplayer_entries[i].place_forget()
                     self.start_menu()
         if self.CANCEL:
-            print(canvas.coords(self.CANCEL))
             if Menu.mouse_inside_pic(self.CANCEL, self.CANCEL_S_load, x, y, self.canvas):
                 self.canvas.delete('all')
                 self.CANCEL = 0
@@ -344,15 +354,23 @@ class Menu(object):
                 if self.previous_menu_branch == "start_menu":
                     if multiplayer_entries[0].get():
                         MULTIPLAYER_SETTINGS[0] = multiplayer_entries[0].get()
-                        game.game_process(tk, canvas, MULTIPLAYER_SETTINGS[0], 'first')
+                        server_host_entry.place_forget()
+                        server_host_label.place_forget()
+                        server_port_entry.place_forget()
+                        server_port_label.place_forget()
+                        game.game_process(tk, canvas, MULTIPLAYER_SETTINGS[0], 'first', SETTINGS)
                         print(MULTIPLAYER_SETTINGS[0])
-                        #server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[0], 'first')
+                        # server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[0], 'first')
 
                     elif multiplayer_entries[1].get():
                         MULTIPLAYER_SETTINGS[1] = multiplayer_entries[1].get()
-                        game.game_process(tk, canvas, MULTIPLAYER_SETTINGS[1], 'second')
+                        server_host_entry.place_forget()
+                        server_host_label.place_forget()
+                        server_port_entry.place_forget()
+                        server_port_label.place_forget()
+                        game.game_process(tk, canvas, MULTIPLAYER_SETTINGS[1], 'second', SETTINGS)
                         print(MULTIPLAYER_SETTINGS[1])
-                        #server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[1], 'second')
+                        # server = Server(multiplayer_settings(MULTIPLAYER_SETTINGS)[1], 'second')
                     else:
                         pass
 
